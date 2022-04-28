@@ -1,0 +1,57 @@
+import tkinter as tk
+# outta all GUI mtds,tkinter is most commanly used. Its a standard Python interface ,Python with tkinter is fastest &easiest way to create GUI applications.
+import requests
+#bcz requests allows us to exchange requests on the web &to send HTTP requests,HTTP requests means requests done by clients to access a resource on the server.
+import time 
+#to handle different operations regarding time 
+def getWeather(canvas):
+    city = textfield.get()
+    api = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=06c921750b9a82d8f5d1294e1586276f"
+    json_data = requests.get(api).json()
+    #to call json data using requests
+    condition = json_data['weather'][0]['main']
+    temp = int (json_data['main']['temp']-273.15)
+    # we did -273.15 to get the temperature value in celcius
+    min_temp = int (json_data['main']['temp_min']-273.15)
+    # to get the minimum temperature
+    max_temp = int (json_data['main']['temp_max']-273.15)
+    # to get the maximum temperature
+    pressure = json_data['main']['pressure']
+    # to get the pressure 
+    humidity = json_data['main']['humidity']
+    # to get the humidity
+    wind = json_data['wind']['speed']
+    # to get the speed of the wind for the day
+    sunrise = time.strftime("%I:%M:%S",time.gmtime(json_data['sys']['sunrise']-19800))
+    #to set the time format in hrs , mins,secs we did that % thing , now in india we have our time GMT+5:30 i.e.19800 secs so need to substract it .
+    sunset = time.strftime("%I:%M:%S",time.gmtime(json_data['sys']['sunset']-19800))
+
+    final_info = condition + "\n" + str(temp) + "°C"
+     #to print avg / normal temp
+    final_data = "\n" + "Max Temp:" + str(max_temp) + "°C" + "\n" + "Min Temp:" + str(min_temp) + "°C" + "Pressure:" + str(pressure) + "\n" + "Humidity:" + str(humidity) + "\n" +"Wind Speed" + str(wind) + "\n" + "Sunrise:"+ sunrise + "\n" + "Sunset:" + sunset
+     
+    #to print max & min temps,pressure,humidity, wind speed , sunrise & sunset
+    label1.config(text = final_info)
+    label2.config(text = final_data)
+canvas = tk.Tk()
+#to define user interface ,Tk() manages everything about tkinter.
+canvas.geometry("600x500")
+#to add structured graphics to the application canvas widget is used & to specify the size , position of the screen layout geometry() is used.
+canvas.title("Weather App")
+#title() is used to set the 1st character in each word to uppercase & remaining to lowercase
+f =( "poppins",15,"bold")
+#here, poppins is the font name , 15 is the font no., bold is the type of font .
+t=("poppins",35,"bold")
+textfield =tk.Entry(canvas, font =t)
+#to take the city name from user, textfield is used to store large texts like paragraphs ,etc.entry() widget is a tkinter widget used to enter or display a single line of text
+textfield.pack( pady = 20)
+#pack()organizes widgets in horizontal & vertical boxes while creating a layout .
+textfield.focus()
+# so that user can type the city name directly without moving the curser.
+textfield.bind('<Return>',getWeather)
+label1 = tk.Label(canvas,font = t)
+label1.pack()
+label2 = tk.Label(canvas,font = f)
+label2.pack()
+# lable widget is used to implement display boxes,so here 2 boxes will get displayed where user can place the texts
+canvas.mainloop()
